@@ -17,10 +17,14 @@ router.get('/',
   async (req, res) => {
     try {
       const users = await User.find({})
-      return users.map(user => ({
-        id: user._id,
-        ...user.personalData,
-      }))
+      return res.json({
+        data: {
+          users: users.map(user => ({
+            id: user._id,
+            personalData: user.personalData,
+          }))
+        }
+      }) 
     } catch (err) {
       return res.status(500).json({
         error_code: 500,
