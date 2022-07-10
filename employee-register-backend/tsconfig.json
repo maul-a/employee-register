@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "resolveJsonModule": true,
+      "strict": true,
+      "lib": ["esnext"],
+      "typeRoots": [
+        "node_modules/@types"
+      ],
+      "baseUrl": ".",
+      "paths": {
+        "@app/*": ["src/*"]
+      },
+      "esModuleInterop": true
+    }
+  }
+  
