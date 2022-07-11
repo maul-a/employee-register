@@ -97,7 +97,7 @@ router.post('/',
     }
   })
 
-router.use('/auth', authRouter)
+router.use('/token', authRouter)
 
 
 export default router
