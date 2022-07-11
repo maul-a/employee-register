@@ -1,32 +1,37 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-import { Link as ReactRouterLink } from "react-router-dom";
-
 import { useAppDispatch } from '@app/hooks'
 import { setAuthUser } from '@app/features/app/appSlice';
+import SignInForm from './SignInForm'
 
 
-const theme = createTheme();
+export interface ISignInFormFields {
+  username?: string
+  password?: string,
+}
 
 export default function SignIn() {
   const dispatch = useAppDispatch()
+  const [ errors, setErrors ] = React.useState({})
 
+  const formValidation = (form: FormData): ISignInFormFields => {
+    const errors: ISignInFormFields = {}
+    const password = form.get('password')?.toString()
+    if (!password || password.length < 6) {
+      errors['password'] = 'The minimum length of a password is 6 characters'
+    }
+    return errors
+  }
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const data = new FormData(event.currentTarget);
+
+    const errors = formValidation(data)
+    setErrors(errors)
+
+    if (Object.keys(errors).length !== 0) {
+      return
+    }
     const response = await fetch('http://localhost:1337/api/v1/user/token', {
       method: 'POST',
       mode: 'cors',
@@ -38,73 +43,19 @@ export default function SignIn() {
         password: data.get('password'),
       })
     })
-    const json = await response.json()
-    dispatch(setAuthUser(json.data))
+    if (response.ok) {
+      const json = await response.json()
+      dispatch(setAuthUser(json.data))
+    } else {
+      const errorList: any = {}
+      const json = await response.json()
+      errorList['username'] = ''
+      errorList['password'] = json['status_message']
+      setErrors(errorList)
+    }
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item>
-                <ReactRouterLink to="/sign-up">
-                  <Link variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </ReactRouterLink>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+    <SignInForm handleSubmit={handleSubmit} errors={errors} />
   );
 }
