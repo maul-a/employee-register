@@ -13,16 +13,33 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { Link as ReactRouterLink } from "react-router-dom";
+
+import { useAppDispatch } from '@app/hooks'
+import { setAuthUser } from '@app/features/app/appSlice';
+
+
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const dispatch = useAppDispatch()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const response = await fetch('http://localhost:1337/api/v1/user/token', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: data.get('username'),
+        password: data.get('password'),
+      })
+    })
+    const json = await response.json()
+    dispatch(setAuthUser(json.data))
   };
 
   return (
@@ -48,10 +65,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
             />
             <TextField
@@ -78,9 +95,11 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/sign-up" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <ReactRouterLink to="/sign-up">
+                  <Link variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </ReactRouterLink>
               </Grid>
             </Grid>
           </Box>
