@@ -35,7 +35,7 @@ export default function SignIn() {
     if (Object.keys(errors).length !== 0) {
       return
     }
-    const response = await fetch('http://localhost:1337/api/v1/user/token', {
+    const response = await fetch('http://localhost:1337/api/v1/employee/token', {
       method: 'POST',
       mode: 'cors',
       headers: {

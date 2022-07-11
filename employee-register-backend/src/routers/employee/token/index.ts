@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { celebrate, Segments, Joi } from 'celebrate'
 import md5 from 'md5'
+import Employee from '@app/models/Employee'
 import User from '@app/models/User'
 import JWTService from '@app/services/jwt-service'
 
@@ -19,17 +20,17 @@ router.post('/',
       password: string
     }
     const { username, password }: IBody = req.body
-    const user = await User.findOne({
-      username
+    const employee = await Employee.findOne({
+      'authData.username': username
     })
-    if (!user) {
+    if (!employee) {
       return res.status(400).json({
         status_code: 400,
-        status_message: 'There is no such username / pasword combination'
+        status_message: 'There is no such username! / pasword combination'
       })
     }
-    const hash = md5(user.salt + password)
-    if (hash !== user.hash) {
+    const hash = md5(employee.authData.salt + password)
+    if (hash !== employee.authData.hash) {
       return res.status(400).json({
         status_code: 400,
         status_message: 'There is no such username / pasword combination'
@@ -37,14 +38,14 @@ router.post('/',
     }
 
     const jwtService = new JWTService()
-    const jwtToken = jwtService.signJWT(user._id)
+    const jwtToken = jwtService.signJWT(employee._id)
     return res.status(200).json({
       data: {
         user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          personalData: user.personalData,
+          id: employee._id,
+          username: employee.authData.username,
+          email: employee.authData.email,
+          personalData: employee,
         },
         jwtToken
       }

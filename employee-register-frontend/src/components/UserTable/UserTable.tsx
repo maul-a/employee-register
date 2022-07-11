@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
     width: 300, 
     valueGetter: (params: GridValueGetterParams) => {
       const  { address } = params.row.personalData
-      return `${address.street || ''} ${address.streetNr} ${address.ZIP} ${address.place}`
+      return `${address.street || ''} ${address.streetNr || ''} ${address.ZIP || ''} ${address.place || ''}`
     },
   },
   { 

@@ -1,9 +1,9 @@
 import express from 'express'
-import User from '@app/models/User'
+import Employee from '@app/models/Employee'
 
 export async function getUser(req:express.Request, res:express.Response, next:express.NextFunction) {
   const { userId } = req.user!
-  const user = await User.findOne({
+  const user = await Employee.findOne({
     _id: userId,
   })
   if (!user) {

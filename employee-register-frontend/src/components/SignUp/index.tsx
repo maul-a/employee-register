@@ -14,7 +14,7 @@ export default function SignUp() {
     const data = new FormData(event.currentTarget);
     const countryName = data.get('country')
     const country = countries.find(currentCountry => currentCountry.name === countryName)
-    const response = await fetch('http://localhost:1337/api/v1/user', {
+    const response = await fetch('http://localhost:1337/api/v1/employee', {
       method: 'POST',
       mode: 'cors',
       headers: {

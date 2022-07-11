@@ -2,26 +2,32 @@ import { Router } from 'express'
 import crypto from 'crypto'
 import md5 from 'md5'
 import { celebrate, Segments, Joi } from 'celebrate'
+import fs from 'fs'
 
-import authRouter from '@app/routers/user/token'
-import User from '@app/models/User'
-import { IEmployee } from '@app/models/Employee'
+import CSVService from '@app/services/csv-service'
+import tokenRouter from '@app/routers/employee/token'
+import Employee, { IEmployee } from '@app/models/Employee'
 import { getUser } from '@app/middlewares/user'
 import { jwtGuard } from '@app/services/jwt-service'
+import { upload } from '@app/middlewares/multer'
+import FormatService from '@app/services/format-service'
 
 const router = Router()
+const csvService = new CSVService()
+const formatService = new FormatService()
 
 router.get('/', 
   jwtGuard,
   getUser,
   async (req, res) => {
     try {
-      const users = await User.find({})
+      const employees = await Employee.find({})
       return res.json({
         data: {
-          users: users.map(user => ({
+          users: employees.map(user => ({
             id: user._id,
-            personalData: user.personalData,
+            role: user.role,
+            personalData: user,
           }))
         }
       }) 
@@ -69,15 +75,19 @@ router.post('/',
         personalData,
       }: IBody = req.body
       const hash = md5(salt + password)
-
-      const user = new User({
-        username,
-        email,
-        personalData,
-        salt,
-        hash,
+      const employee = new Employee({
+        firstName: personalData.firstName,
+        lastName: personalData.lastName,
+        authData: {
+          username,
+          email,
+          salt,
+          hash,
+        },
+        address: personalData.address,
+        role: personalData.role,
       })
-      const createdUser = await user.save()
+      const createdUser = await employee.save()
       return res.status(200).json({
         data: {
           user: {
@@ -97,7 +107,39 @@ router.post('/',
     }
   })
 
-router.use('/token', authRouter)
+router.post('/import/csv', 
+  upload.single('file'),
+  async (req, res) => {
+    const file = req.file
+    if (!file) {
+      return res.status(500).json({
+        error_code: 500,
+        error_message: 'Internal Server Error',
+      })
+    }
+    const buf = fs.readFileSync(file.path)
+    const data = await csvService.parseCSV(buf) as any[]
+    const formattedCSV = csvService.formatCSV(data)
+    const employeesToInsert = formattedCSV.map(row => ({
+      firstName: row.Vorname,
+      lastName: row.Nachname,
+      role: row.Rolle,
+      address: {
+        country: formatService.getCountryCode(row.Land) ?? row.Land ,
+        place: row.Ort,
+        ZIP: row.PLZ,
+        street: row.Strasse,
+        streetNr: row.Nr,
+      }
+    }))
+    const employees = await Employee.insertMany(employeesToInsert)
+    return res.json({
+      data: { employees },
+    })
+  }
+)
+
+router.use('/token', tokenRouter)
 
 
 export default router
