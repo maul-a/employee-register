@@ -1,17 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { Navigate } from 'react-router-dom'
 import { useAppSelector } from '@app/hooks'
-import SignIn from '@app/components/SignIn'
-import { selectTest } from '@app/features/app/appSlice'
+import UserTable from '@app/components/UserTable'
+import { selectUser } from '@app/features/app/appSlice'
 import './index.scss'
 
 export const App = () => {
-  const mode = useAppSelector(selectTest)
+  const user = useAppSelector(selectUser)
   const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     console.log(e)
   }
+  if (!user) {
+    return <Navigate to="/sign-in" replace />
+  }
   return (
   <>
-    <SignIn />
+    <UserTable />
   </>
   )
 }

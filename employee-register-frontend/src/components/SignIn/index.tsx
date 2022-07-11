@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@app/hooks'
 import { setAuthUser } from '@app/features/app/appSlice';
 import SignInForm from './SignInForm'
@@ -11,6 +12,8 @@ export interface ISignInFormFields {
 
 export default function SignIn() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate();
+
   const [ errors, setErrors ] = React.useState({})
 
   const formValidation = (form: FormData): ISignInFormFields => {
@@ -46,6 +49,7 @@ export default function SignIn() {
     if (response.ok) {
       const json = await response.json()
       dispatch(setAuthUser(json.data))
+      navigate('/')
     } else {
       const errorList: any = {}
       const json = await response.json()

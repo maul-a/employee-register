@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../../store'
+import { RootState } from '@app/store'
 
 interface AppState {
   test?: string
@@ -42,12 +42,17 @@ export const AppSlice = createSlice({
     setAuthUser: (state, action: PayloadAction<{user: IUser, jwtToken: string}>) => {
       state.jwtToken = action.payload.jwtToken
       state.user = action.payload.user
+    },
+    logOutUser: (state) => {
+      state.user = undefined
+      state.jwtToken = undefined
     }
   },
 })
 
-export const { setAuthUser } = AppSlice.actions
+export const { setAuthUser, logOutUser } = AppSlice.actions
 
-export const selectTest = (state: RootState) => state.app.test
+export const selectUser = (state: RootState) => state.app.user
+export const selectJwtToken = (state: RootState) => state.app.jwtToken
 
 export default AppSlice.reducer
