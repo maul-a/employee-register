@@ -27,7 +27,10 @@ router.get('/',
           users: employees.map(user => ({
             id: user._id,
             role: user.role,
-            personalData: user,
+            address: user.address,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            authData: user.authData,
           }))
         }
       }) 
@@ -38,7 +41,13 @@ router.get('/',
       })
     }
   })
-
+router.get('/me',
+  jwtGuard,
+  getUser,
+  async (req, res) => {
+    return res.json({ employee: req.user!.user })
+  }
+)
 router.post('/', 
   celebrate({
     [Segments.BODY]: Joi.object().keys({
@@ -134,10 +143,20 @@ router.post('/import/csv',
     }))
     const employees = await Employee.insertMany(employeesToInsert)
     return res.json({
-      data: { employees },
+      data: { 
+        employees: employees.map(employee => ({
+          id: employee._id,
+          role: employee.role,
+          address: employee.address,
+          firstName: employee.firstName,
+          lastName: employee.lastName,
+        }))
+      },
     })
   }
 )
+
+
 
 router.use('/token', tokenRouter)
 

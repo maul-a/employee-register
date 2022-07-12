@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@app/hooks'
-import { setAuthUser } from '@app/features/app/appSlice';
+import { setAuthData } from '@app/features/auth/authSlice';
+import { authorize } from '@app/features/auth/authRequests';
 import SignInForm from './SignInForm'
 
 
@@ -19,8 +20,13 @@ export default function SignIn() {
   const formValidation = (form: FormData): ISignInFormFields => {
     const errors: ISignInFormFields = {}
     const password = form.get('password')?.toString()
+    const username = form.get('username')?.toString()
+
     if (!password || password.length < 6) {
       errors['password'] = 'The minimum length of a password is 6 characters'
+    }
+    if (!username || username.length < 0) {
+      errors['username'] = "Username can't be empty"
     }
     return errors
   }
@@ -35,27 +41,19 @@ export default function SignIn() {
     if (Object.keys(errors).length !== 0) {
       return
     }
-    const response = await fetch('http://localhost:1337/api/v1/employee/token', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: data.get('username'),
-        password: data.get('password'),
-      })
-    })
-    if (response.ok) {
-      const json = await response.json()
-      dispatch(setAuthUser(json.data))
+    const username = data.get('username')!.toString()
+    const password = data.get('password')!.toString()
+    const { response, error } = await authorize(username, password)
+    if (response) {
+      dispatch(setAuthData(response))
       navigate('/')
-    } else {
-      const errorList: any = {}
-      const json = await response.json()
-      errorList['username'] = ''
-      errorList['password'] = json['status_message']
-      setErrors(errorList)
+      return
+    }
+    if (error) {
+      setErrors({
+        'username': error,
+        'password': error
+      })
     }
   };
 

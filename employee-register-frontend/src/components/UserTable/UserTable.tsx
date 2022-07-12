@@ -1,8 +1,7 @@
 import React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Container } from '@mui/material';
-import { IUser } from '@app/features/app/appSlice';
 import countries from '@app/json/countries.json' 
+import { IEmployee } from '@app/features/employees/employeesSlice';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID'},
@@ -13,21 +12,19 @@ const columns: GridColDef[] = [
     sortable: false,
     width: 160,
     valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.personalData.firstName || ''} ${params.row.personalData.lastName || ''}`,
+      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
   },
   { 
     field: 'role', 
     headerName: 'Role', 
     width: 130,
-    valueGetter: (params: GridValueGetterParams) =>
-      params.row.personalData.role
    },
    { 
     field: 'address', 
     headerName: 'Address',
     width: 300, 
     valueGetter: (params: GridValueGetterParams) => {
-      const  { address } = params.row.personalData
+      const  { address } = params.row
       return `${address.street || ''} ${address.streetNr || ''} ${address.ZIP || ''} ${address.place || ''}`
     },
   },
@@ -35,7 +32,7 @@ const columns: GridColDef[] = [
     field: 'country', 
     headerName: 'Country', 
     valueGetter: (params: GridValueGetterParams) => {
-      const  { address } = params.row.personalData
+      const  { address } = params.row
       const country = countries.find(currentCountry => currentCountry.code === address.country)?.name
       return country ?? address.country
     }
@@ -44,7 +41,7 @@ const columns: GridColDef[] = [
 
 
 interface IDataTable {
-  list: IUser[]
+  list: IEmployee[]
 }
 
 export default function DataTable({
