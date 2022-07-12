@@ -8,6 +8,7 @@ import { loadTokenFromLocalStorage } from '@app/features/auth/authRequests'
 import SignIn from '../SignIn'
 import SignUp from '../SignUp'
 import UserTable from '../UserTable'
+import AddNewEmployee from '../AddNewEmployee'
 
 export const App = () => {
   const dispatch = useAppDispatch()
@@ -27,6 +28,7 @@ export const App = () => {
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<UserTable />} />
+      <Route path="/add-new-employee" element={<AddNewEmployee />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
     </Routes>

@@ -30,7 +30,6 @@ router.get('/',
             address: user.address,
             firstName: user.firstName,
             lastName: user.lastName,
-            authData: user.authData,
           }))
         }
       }) 
@@ -48,7 +47,44 @@ router.get('/me',
     return res.json({ employee: req.user!.user })
   }
 )
+
 router.post('/', 
+  jwtGuard,
+  getUser,
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      employee: Joi.object().keys({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        role: Joi.string().required(),
+        address: Joi.object().keys({
+          street: Joi.string().required(),
+          streetNr: Joi.string().required(),
+          ZIP: Joi.string().required(),
+          place: Joi.string().required(),
+          country: Joi.string().required(),
+        }).required(),
+      }).required(),
+    }),
+  }),
+  async (req, res) => {
+    interface IBody {
+      employee: IEmployee
+    }
+    const { employee: employeeData }: IBody = req.body
+    const employee = new Employee(employeeData)
+    const createdEmployee = await employee.save()
+    return res.status(200).json({
+      data: {
+        employee: {
+          ...employeeData,
+          id: createdEmployee._id,
+        },
+      },
+    })
+  }
+)
+router.post('/me', 
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       username: Joi.string().required(),

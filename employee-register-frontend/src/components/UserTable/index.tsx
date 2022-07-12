@@ -8,7 +8,7 @@ import { requestEmployeeList } from '@app/features/employees/employeesRequests'
 import { selectEmployeeList, selectEmployeesLoadingStatus, setEmployeeList } from '@app/features/employees/employeesSlice'
 import ImportFromCSV from './ImportFromCSV'
 import DataTable from './UserTable'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 
 
@@ -45,7 +45,7 @@ export default function UserTable() {
       <DataTable list={employeeList} />
       <ButtonGroup sx={{ boxShadow: 0, marginTop: 3 }} variant="contained" aria-label="outlined primary button group">
         <ImportFromCSV />
-        <Button sx={{ marginLeft: 10 }} variant="contained" component="span">
+        <Button sx={{ marginLeft: 10 }} variant="contained" component={Link} to="/add-new-employee">
           Add new employee
         </Button>
       </ButtonGroup>
