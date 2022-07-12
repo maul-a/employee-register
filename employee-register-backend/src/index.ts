@@ -11,6 +11,7 @@ dotenv.config()
 const app = express()
 
 const PORT = process.env['PORT'] || 3000
+console.log(process.env['DATABASE_URL'])
 connectDB()
 app.use(express.json())
 if (process.env['NODE_ENV'] !== 'PRODUCTION') {

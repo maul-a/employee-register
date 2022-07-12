@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  mongodb_container:
+    image: mongo:latest
+    volumes:
+      - mongodb_data_container:/data/db
+  employee-register-backend:
+    build: ./employee-register-backend
+    environment:
+      DATABASE_URL: mongodb://mongodb_container:27017/employee-register
+      PORT: 1337
+      JWT_SECRET: jwtsecret
+    depends_on: 
+      - mongodb_container
+  employee-register-frontend:
+    build: ./employee-register-frontend
+    depends_on:
+      - employee-register-backend
+    environment:
+      PORT: 1337
+    ports:
+      - 8000:80
+volumes:
+  mongodb_data_container:

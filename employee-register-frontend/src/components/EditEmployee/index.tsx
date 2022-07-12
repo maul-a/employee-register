@@ -71,15 +71,14 @@ export default function EditEmployee() {
           alignItems: 'center',
         }}
       >
-          <Typography component="h1" variant="h5">
-            Edit Employee
-          </Typography>
-
-      <SignUpForm 
-        handleSubmit={handleSubmit}
-        submitButtonText="Save"
-        defaultValues={defaultValues}
-      />
+        <Typography component="h1" variant="h5">
+          Edit Employee
+        </Typography>
+        <SignUpForm 
+          handleSubmit={handleSubmit}
+          submitButtonText="Save"
+          defaultValues={defaultValues}
+        />
       </Box>
     </Container>
   )

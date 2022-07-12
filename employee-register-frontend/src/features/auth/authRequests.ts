@@ -10,7 +10,7 @@ interface IAuthorizeResponse {
 }
 
 async function authorize(username: string, password: string): Promise<IAuthorizeResponse> {
-  const response = await fetch('http://localhost:1337/api/v1/employee/token', {
+  const response = await fetch('/api/v1/employee/token', {
     method: 'POST',
     mode: 'cors',
     headers: {
@@ -42,7 +42,7 @@ async function loadTokenFromLocalStorage() {
   if (Date.now() >= jwtTokenDecoded['exp'] * 1000) {
     return
   }
-  const response = await fetch('http://localhost:1337/api/v1/employee/me', {
+  const response = await fetch('/api/v1/employee/me', {
     method: 'GET',
     mode: 'cors',
     headers: {

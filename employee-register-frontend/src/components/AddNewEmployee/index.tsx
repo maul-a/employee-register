@@ -49,14 +49,13 @@ export default function AddNewEmployee() {
           alignItems: 'center',
         }}
       >
-          <Typography component="h1" variant="h5">
-            Add a new employee
-          </Typography>
-
-      <SignUpForm 
-        handleSubmit={handleSubmit}
-        submitButtonText="Add New Employee"
-      />
+        <Typography component="h1" variant="h5">
+          Add a new employee
+        </Typography>
+        <SignUpForm 
+          handleSubmit={handleSubmit}
+          submitButtonText="Add New Employee"
+        />
       </Box>
     </Container>
   )
