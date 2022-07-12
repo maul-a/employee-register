@@ -41,34 +41,7 @@ router.get('/',
     }
   }
 )
-router.delete('/:id',
-  jwtGuard,
-  getUser,
-  celebrate({
-    [Segments.PARAMS]: Joi.object().keys({
-      id: Joi.string(),
-    }),
-  }),
-  async (req, res) => {
-    const { id }  = req.params
-    const user = req.user!.user
-    if (user.id === id) {
-      return res.status(400).json({
-        error_code: 400,
-        error_message: 'You can\'t delete your own profile'
-      })
-    }
-    try {
-      await Employee.findByIdAndDelete(id)
-      return res.status(200).json({ data: {} })
-    } catch (err) {
-      return res.status(404).json({
-        error_code: 404,
-        error_message: 'Not found'
-      })
-    }
-  }
-)
+
 router.get('/me',
   jwtGuard,
   getUser,
@@ -76,6 +49,7 @@ router.get('/me',
     return res.json({ employee: req.user!.user })
   }
 )
+
 
 router.post('/', 
   jwtGuard,
@@ -181,6 +155,8 @@ router.post('/me',
     }
   })
 
+
+
 router.post('/import/csv', 
   upload.single('file'),
   async (req, res) => {
@@ -221,6 +197,97 @@ router.post('/import/csv',
   }
 )
 
+
+
+router.get('/:id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.string(),
+    }),
+  }),
+  async (req, res) => {
+    const { id }  = req.params
+    const employee = await Employee.findById(id)
+    return res.json({ data: { employee } })
+  }
+)
+router.put('/:id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.string(),
+    }),
+    [Segments.BODY]: Joi.object().keys({
+      employee: Joi.object().keys({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        role: Joi.string().required(),
+        address: Joi.object().keys({
+          street: Joi.string().required(),
+          streetNr: Joi.string().required(),
+          ZIP: Joi.string().required(),
+          place: Joi.string().required(),
+          country: Joi.string().required(),
+        }).required(),
+      }).required(),
+    }),
+  }),
+  async (req, res) => {
+    interface IBody {
+      employee: IEmployee
+    }
+    const { employee: employeeData }: IBody = req.body
+    const { id }  = req.params
+    const employee = await Employee.findById(id)
+    if (!employee) {
+      return res.status(404).json({
+        error_code: 404,
+        error_message: 'Resource Not Found',
+      })
+    }
+    employee.firstName = employeeData.firstName
+    employee.lastName = employeeData.lastName
+    employee.role = employeeData.role
+    employee.address = employeeData.address
+    await employee.save()
+    
+    return res.json({ 
+      data: { 
+        employee: {
+          id: employee.id,
+          ...employeeData
+        } 
+      } 
+    })
+  })
+
+router.delete('/:id',
+  jwtGuard,
+  getUser,
+  celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.string(),
+    }),
+  }),
+  async (req, res) => {
+    const { id }  = req.params
+    const user = req.user!.user
+    if (user.id === id) {
+      return res.status(400).json({
+        error_code: 400,
+        error_message: 'You can\'t delete your own profile'
+      })
+    }
+    try {
+      await Employee.findByIdAndDelete(id)
+      return res.status(200).json({ data: {} })
+    } catch (err) {
+      return res.status(404).json({
+        error_code: 404,
+        error_message: 'Resource Not found'
+      })
+    }
+  }
+)
 
 
 router.use('/token', tokenRouter)

@@ -1,8 +1,8 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
 
-const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_URL = process.env.DATABASE_URL
 
 export async function connectDB() {
   if (!DATABASE_URL) {
@@ -10,11 +10,10 @@ export async function connectDB() {
     return
   }
   try {
-    mongoose.connect(DATABASE_URL);
-    console.log("MongoDB connected");
+    mongoose.connect(DATABASE_URL)
+    console.log('MongoDB connected')
   } catch (error) {
-    //@ts-ignore
-    console.error(error.message);
-    process.exit(1);
+    console.error((error as Error).message)
+    process.exit(1)
   }
 }
