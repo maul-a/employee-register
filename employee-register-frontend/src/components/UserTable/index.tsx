@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { IconButton, CircularProgress, Container } from '@mui/material'
+import { IconButton, CircularProgress, Container, Button, ButtonGroup } from '@mui/material'
 import { LockOpen } from '@mui/icons-material'
-import { logOutUser, selectJwtToken } from '@app/features/auth/authSlice'
+import { logOutUser, selectJwtToken, selectUser } from '@app/features/auth/authSlice'
 import { useAppDispatch, useAppSelector } from '@app/hooks'
 import { requestEmployeeList } from '@app/features/employees/employeesRequests'
 import { selectEmployeeList, selectEmployeesLoadingStatus, setEmployeeList } from '@app/features/employees/employeesSlice'
 import ImportFromCSV from './ImportFromCSV'
 import DataTable from './UserTable'
+import { Navigate } from 'react-router-dom'
 
 
 
@@ -21,10 +22,17 @@ export default function UserTable() {
     }
   }, [])
   const logOut = () => {
+    localStorage.removeItem('jwtToken')
     dispatch(logOutUser())
   }
   const employeeList = useSelector(selectEmployeeList)
   const loading = useSelector(selectEmployeesLoadingStatus)
+  const user = useAppSelector(selectUser)
+
+  if (!user) {
+    return <Navigate to="/sign-in" replace />
+  }
+
   if (loading) {
     return <CircularProgress />
   }
@@ -35,7 +43,12 @@ export default function UserTable() {
         <LockOpen />
       </IconButton>
       <DataTable list={employeeList} />
-      <ImportFromCSV />
+      <ButtonGroup sx={{ boxShadow: 0, marginTop: 3 }} variant="contained" aria-label="outlined primary button group">
+        <ImportFromCSV />
+        <Button sx={{ marginLeft: 10 }} variant="contained" component="span">
+          Add new employee
+        </Button>
+      </ButtonGroup>
     </Container>
   );
 }

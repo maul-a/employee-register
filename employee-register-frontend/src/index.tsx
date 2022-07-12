@@ -13,14 +13,7 @@ import SignIn from './components/SignIn';
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="/sign-in" element={<SignIn />} />
-      <Route path="/sign-up" element={<SignUp />} />
-    </Routes>
-  </BrowserRouter>
-
+    <App />
   </Provider>,
     document.getElementById('app-root'),
 )
