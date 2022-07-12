@@ -10,7 +10,30 @@ interface ICreateEmployeeResponse {
   error?: string
 }
 
-async function createEmployee(jwtToken: string, employee: IEmployee): Promise<ICreateEmployeeResponse> {
+interface IDeleteEmployeeResponse {
+  response?: string
+  error?: string
+}
+
+async function deleteEmployee(jwtToken: string, userId: string): Promise<IDeleteEmployeeResponse> {
+  const response = await fetch(`http://localhost:1337/api/v1/employee/${userId}`, {
+    method: 'DELETE',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`
+    },
+  })
+  if (response.ok) {
+    const json = await response.json()
+    return { response: userId }
+  } else {
+    const json = await response.json()
+    return { error: json['status_message'] }    
+  }
+}
+
+async function createEmployee(jwtToken: string, employee: Omit<IEmployee, 'id'>): Promise<ICreateEmployeeResponse> {
   const response = await fetch('http://localhost:1337/api/v1/employee', {
     method: 'POST',
     mode: 'cors',
@@ -70,6 +93,7 @@ async function importEmployeesFromCSV(jwtToken: string, csvFile: File): Promise<
 
 export { 
   createEmployee, 
+  deleteEmployee,
   requestEmployeeList, 
   importEmployeesFromCSV,
  }

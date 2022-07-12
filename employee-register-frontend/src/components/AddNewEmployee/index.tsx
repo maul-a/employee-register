@@ -20,7 +20,7 @@ export default function AddNewEmployee() {
     const countryName = data.get('country')
     const country = countries.find(currentCountry => currentCountry.name === countryName)
 
-    const employee: IEmployee = {
+    const employee: Omit<IEmployee, 'id'> = {
       role: data.get('role')!.toString(),
       firstName: data.get('firstName')!.toString(),
       lastName: data.get('lastName')!.toString(),

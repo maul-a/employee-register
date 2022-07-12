@@ -2,12 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@app/store'
 
 
-interface AuthState {
+interface EmployeesState {
   employeeList: IEmployee[]
   loading: boolean
 }
 
 export interface IEmployee {
+  id: string
   firstName: string
   lastName: string
   role: string
@@ -36,7 +37,7 @@ export interface IUser {
   username: string
 }
 
-const initialState: AuthState = {
+const initialState: EmployeesState = {
   employeeList: [],
   loading: true,
 }
@@ -45,14 +46,24 @@ export const EmployeesSlice = createSlice({
   name: 'employee',
   initialState,
   reducers: {
-    setEmployeeList: (state: AuthState, action: PayloadAction<IEmployee[]>) => {
+    setEmployeeList: (state: EmployeesState, action: PayloadAction<IEmployee[]>) => {
       state.employeeList = action.payload
       state.loading = false
     },
-    setLoadingStatus: (state: AuthState) => {
+    setLoadingStatus: (state: EmployeesState) => {
       state.loading = true
     },
-    addToEmployeeList: (state: AuthState, action: PayloadAction<IEmployee[]>) => {
+    deleteEmployeeFromList: (state: EmployeesState, action: PayloadAction<string>) => {
+      state.employeeList = [
+        ...state.employeeList
+          .filter(employee => employee.id !== action.payload)
+          .map(employee => ({
+            ...employee,
+            address: {...employee.address},
+            authData: employee.authData ? {...employee.authData} : undefined,
+        }))]
+    },
+    addToEmployeeList: (state: EmployeesState, action: PayloadAction<IEmployee[]>) => {
       state.employeeList = [
         ...state.employeeList.map(employee => ({
           ...employee,
@@ -65,7 +76,12 @@ export const EmployeesSlice = createSlice({
   },
 })
 
-export const { setEmployeeList, setLoadingStatus, addToEmployeeList } = EmployeesSlice.actions
+export const { 
+  deleteEmployeeFromList, 
+  setEmployeeList, 
+  setLoadingStatus, 
+  addToEmployeeList,
+ } = EmployeesSlice.actions
 
 export const selectEmployeeList = (state: RootState) => state.employees.employeeList
 export const selectEmployeesLoadingStatus = (state: RootState) => state.employees.loading

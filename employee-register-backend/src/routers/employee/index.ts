@@ -39,7 +39,36 @@ router.get('/',
         error_message: 'Server Internal Error',
       })
     }
-  })
+  }
+)
+router.delete('/:id',
+  jwtGuard,
+  getUser,
+  celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.string(),
+    }),
+  }),
+  async (req, res) => {
+    const { id }  = req.params
+    const user = req.user!.user
+    if (user.id === id) {
+      return res.status(400).json({
+        error_code: 400,
+        error_message: 'You can\'t delete your own profile'
+      })
+    }
+    try {
+      await Employee.findByIdAndDelete(id)
+      return res.status(200).json({ data: {} })
+    } catch (err) {
+      return res.status(404).json({
+        error_code: 404,
+        error_message: 'Not found'
+      })
+    }
+  }
+)
 router.get('/me',
   jwtGuard,
   getUser,
