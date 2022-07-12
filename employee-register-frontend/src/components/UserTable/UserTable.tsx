@@ -5,6 +5,7 @@ import { ButtonGroup, IconButton, TableContainer, Table, TableBody, TableCell, T
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import countries from '@app/json/countries.json' 
 import { IEmployee } from '@app/features/employees/employeesSlice';
+import { Link } from 'react-router-dom';
 
 
 
@@ -51,7 +52,7 @@ export default function DataTable({
               <TableCell align="right">{countryName}</TableCell>
               <TableCell align="right">
                 <ButtonGroup>
-                <IconButton> <EditIcon /> </IconButton>
+                <IconButton component={Link} to={`/edit-employee/${row.id}`}> <EditIcon /> </IconButton>
                 <IconButton onClick={() => setEmployeeToDelete(row.id)}> <DeleteIcon /> </IconButton>
               </ButtonGroup>
               </TableCell>

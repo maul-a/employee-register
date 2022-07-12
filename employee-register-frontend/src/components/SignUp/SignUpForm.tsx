@@ -3,11 +3,26 @@ import { Box, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Autoco
 import countries from '@app/json/countries.json'
 
 
+interface IFields {
+  firstName?: string
+  lastName?: string
+  username?: string
+  email?: string
+  password?: string
+  role?: string
+  street?: string
+  streetNr?: string
+  ZIP?: string
+  place?: string
+  country?: string
+}
+
 interface SignUpFormProps {
     handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
     hasAuthData?: boolean
     footer?: React.ReactNode
     submitButtonText: string
+    defaultValues?: IFields
   }
 
 export default function SignUpForm({
@@ -15,6 +30,7 @@ export default function SignUpForm({
     hasAuthData = false,
     footer,
     submitButtonText,
+    defaultValues = {}
   }: SignUpFormProps) {
 
     return (
@@ -29,6 +45,7 @@ export default function SignUpForm({
               id="firstName"
               label="First Name"
               autoFocus
+              defaultValue={defaultValues.firstName || ''}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -39,6 +56,7 @@ export default function SignUpForm({
               label="Last Name"
               name="lastName"
               autoComplete="family-name"
+              defaultValue={defaultValues.lastName || ''}
             />
           </Grid>
           {hasAuthData && 
@@ -50,6 +68,7 @@ export default function SignUpForm({
               label="Username"
               name="username"
               autoComplete="username"
+              defaultValue={defaultValues.username || ''}
             />
           </Grid>}
           {hasAuthData &&
@@ -61,6 +80,7 @@ export default function SignUpForm({
               label="Email Address"
               name="email"
               autoComplete="email"
+              defaultValue={defaultValues.email || ''}
             />
           </Grid>
           }
@@ -74,26 +94,19 @@ export default function SignUpForm({
               type="password"
               id="password"
               autoComplete="new-password"
+              defaultValue={defaultValues.password || ''}
             />
           </Grid>
           }
           <Grid item xs={12}>
-
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Role</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Role"
-              name="role"
+          <TextField
               required
-              defaultValue="Administrator"
-            >
-              <MenuItem value="Administrator">Administrator</MenuItem>
-              <MenuItem value="Developer">Developer</MenuItem>
-              <MenuItem value="Salesperson">Salesperson</MenuItem>
-            </Select>
-          </FormControl>
+              fullWidth
+              name="role"
+              label="Role"
+              id="role"
+              defaultValue={defaultValues.role || ''}
+            />
           </Grid>
           <Grid item xs={12} sm={8}>
             <TextField
@@ -104,6 +117,7 @@ export default function SignUpForm({
               id="street"
               label="Street"
               autoFocus
+              defaultValue={defaultValues.street || ''}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -114,6 +128,7 @@ export default function SignUpForm({
               label="Street Nr."
               name="streetNr"
               autoComplete="address-line2"
+              defaultValue={defaultValues.streetNr || ''}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -124,6 +139,7 @@ export default function SignUpForm({
               fullWidth
               id="ZIP"
               label="ZIP"
+              defaultValue={defaultValues.ZIP || ''}
               autoFocus
             />
           </Grid>
@@ -134,6 +150,7 @@ export default function SignUpForm({
               id="place"
               label="Place"
               name="place"
+              defaultValue={defaultValues.place || ''}
               autoComplete="address-level2"
             />
           </Grid>
@@ -142,6 +159,7 @@ export default function SignUpForm({
             disablePortal
             id="combo-box-demo"
             options={countries.map(country => country.name)}
+            defaultValue={defaultValues.country || ''}
             renderInput={(params) => (
               <TextField {...params} required label="Country" name="country" />
             )}

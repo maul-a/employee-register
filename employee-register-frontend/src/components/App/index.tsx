@@ -9,6 +9,7 @@ import SignIn from '../SignIn'
 import SignUp from '../SignUp'
 import UserTable from '../UserTable'
 import AddNewEmployee from '../AddNewEmployee'
+import EditEmployee from '../EditEmployee'
 
 export const App = () => {
   const dispatch = useAppDispatch()
@@ -29,6 +30,7 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<UserTable />} />
       <Route path="/add-new-employee" element={<AddNewEmployee />} />
+      <Route path="/edit-employee/:id" element={<EditEmployee />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
     </Routes>

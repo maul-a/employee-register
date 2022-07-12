@@ -5,6 +5,11 @@ interface IGetEmployeeListResponse {
   error?: string
 }
 
+interface IGetEmployeeResponse {
+  response?: IEmployee
+  error?: string
+}
+
 interface ICreateEmployeeResponse {
   response?: IEmployee
   error?: string
@@ -33,6 +38,27 @@ async function deleteEmployee(jwtToken: string, userId: string): Promise<IDelete
   }
 }
 
+async function updateEmployee(jwtToken: string, id: string, employee: Omit<IEmployee, 'id'>): Promise<ICreateEmployeeResponse> {
+  const response = await fetch(`http://localhost:1337/api/v1/employee/${id}`, {
+    method: 'PUT',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`
+    },
+    body: JSON.stringify({
+      employee
+    })
+  })
+  if (response.ok) {
+    const json = await response.json()
+    return { response: json.data.employee }
+  } else {
+    const json = await response.json()
+    return { error: json['status_message'] }    
+  }
+}
+
 async function createEmployee(jwtToken: string, employee: Omit<IEmployee, 'id'>): Promise<ICreateEmployeeResponse> {
   const response = await fetch('http://localhost:1337/api/v1/employee', {
     method: 'POST',
@@ -44,6 +70,23 @@ async function createEmployee(jwtToken: string, employee: Omit<IEmployee, 'id'>)
     body: JSON.stringify({
       employee
     })
+  })
+  if (response.ok) {
+    const json = await response.json()
+    return { response: json.data.employee }
+  } else {
+    const json = await response.json()
+    return { error: json['status_message'] }    
+  }
+}
+
+async function requestEmployee(id: string): Promise<IGetEmployeeResponse> {
+  const response = await fetch(`http://localhost:1337/api/v1/employee/${id}`, {
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
   if (response.ok) {
     const json = await response.json()
@@ -92,7 +135,9 @@ async function importEmployeesFromCSV(jwtToken: string, csvFile: File): Promise<
 }
 
 export { 
-  createEmployee, 
+  requestEmployee,
+  updateEmployee,
+  createEmployee,
   deleteEmployee,
   requestEmployeeList, 
   importEmployeesFromCSV,
