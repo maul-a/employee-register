@@ -6,6 +6,11 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   mode: prod ? 'production' : 'development',
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  },
   entry: './src/index.tsx',
   output: {
     path: __dirname + '/dist/',
@@ -25,18 +30,6 @@ module.exports = {
           },
         },
         use: 'ts-loader',
-      },
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "sass-loader",
-        ],
       },
     ]
   },
