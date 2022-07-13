@@ -18,6 +18,7 @@ services:
       - employee-register-backend
     environment:
       PORT: 1337
+      NODE_ENV: production
     ports:
       - 8000:80
 volumes:
