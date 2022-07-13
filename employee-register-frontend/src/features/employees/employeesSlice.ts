@@ -32,9 +32,9 @@ export interface IPersonalData {
 }
 
 export interface IUser {
-  id: string
   email: string
   username: string
+  password?: string
 }
 
 const initialState: EmployeesState = {

@@ -6,6 +6,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import countries from '@app/json/countries.json'
 import SignUpForm from './SignUpForm'
+import { IEmployee } from '@app/features/employees/employeesSlice';
+import { register } from '@app/features/auth/authRequests';
 
 const Footer = (
   <Grid container>
@@ -26,31 +28,24 @@ export default function SignUpPage() {
     const data = new FormData(event.currentTarget);
     const countryName = data.get('country')
     const country = countries.find(currentCountry => currentCountry.name === countryName)
-    const response = await fetch('/api/v1/employee/me', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
+    const employee: Omit<IEmployee, 'id'> = {
+      role: data.get('role')!.toString(),
+      firstName: data.get('firstName')!.toString(),
+      lastName: data.get('lastName')!.toString(),
+      address: {
+        street: data.get('street')!.toString(),
+        streetNr: data.get('streetNr')!.toString(),
+        place: data.get('place')!.toString(),
+        ZIP: data.get('ZIP')!.toString(),
+        country: country ? country.code : '',
       },
-      body: JSON.stringify({
-        username: data.get('username'),
-        password: data.get('password'),
-        email: data.get('email'),
-        personalData: {
-          role: data.get('role'),
-          firstName: data.get('firstName'),
-          lastName: data.get('lastName'),
-          address: {
-            street: data.get('street'),
-            streetNr: data.get('streetNr'),
-            place: data.get('place'),
-            ZIP: data.get('ZIP'),
-            country: country ? country.code : null,
-          }
-        }
-      })
-    })
-    const json = await response.json()
+      authData: {
+        username: data.get('username')!.toString(),
+        password: data.get('password')!.toString(),
+        email: data.get('email')!.toString(),
+      }
+    }
+    await register(employee)
     navigate('/sign-in')
   };
 

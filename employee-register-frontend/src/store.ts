@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
-import authSlice from './features/auth/authSlice'
-import employeesSlice from './features/employees/employeesSlice'
+import authSlice from '@app/features/auth/authSlice'
+import commentsSlice from '@app/features/comments/commentsSlice'
+import employeesSlice from '@app/features/employees/employeesSlice'
 
 const store = configureStore({
   reducer: {
     auth: authSlice,
     employees: employeesSlice,
+    comments: commentsSlice
   },
 })
 

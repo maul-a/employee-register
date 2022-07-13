@@ -6,7 +6,7 @@ interface IGetEmployeeListResponse {
 }
 
 interface IGetEmployeeResponse {
-  response?: IEmployee
+  response?: IEmployee & {hasAuthData: boolean}
   error?: string
 }
 
@@ -20,8 +20,10 @@ interface IDeleteEmployeeResponse {
   error?: string
 }
 
+const BASE_URL = process.env['NODE_ENV'] === 'production' ? '' : 'http://localhost:1337'
+
 async function deleteEmployee(jwtToken: string, userId: string): Promise<IDeleteEmployeeResponse> {
-  const response = await fetch(`/api/v1/employee/${userId}`, {
+  const response = await fetch(`${BASE_URL}/api/v1/employee/${userId}`, {
     method: 'DELETE',
     mode: 'cors',
     headers: {
@@ -39,7 +41,7 @@ async function deleteEmployee(jwtToken: string, userId: string): Promise<IDelete
 }
 
 async function updateEmployee(jwtToken: string, id: string, employee: Omit<IEmployee, 'id'>): Promise<ICreateEmployeeResponse> {
-  const response = await fetch(`/api/v1/employee/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/v1/employee/${id}`, {
     method: 'PUT',
     mode: 'cors',
     headers: {
@@ -60,7 +62,7 @@ async function updateEmployee(jwtToken: string, id: string, employee: Omit<IEmpl
 }
 
 async function createEmployee(jwtToken: string, employee: Omit<IEmployee, 'id'>): Promise<ICreateEmployeeResponse> {
-  const response = await fetch('/api/v1/employee', {
+  const response = await fetch(`${BASE_URL}/api/v1/employee`, {
     method: 'POST',
     mode: 'cors',
     headers: {
@@ -81,7 +83,7 @@ async function createEmployee(jwtToken: string, employee: Omit<IEmployee, 'id'>)
 }
 
 async function requestEmployee(id: string): Promise<IGetEmployeeResponse> {
-  const response = await fetch(`/api/v1/employee/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/v1/employee/${id}`, {
     method: 'GET',
     mode: 'cors',
     headers: {
@@ -98,7 +100,7 @@ async function requestEmployee(id: string): Promise<IGetEmployeeResponse> {
 }
 
 async function requestEmployeeList(jwtToken: string): Promise<IGetEmployeeListResponse> {
-  const response = await fetch('/api/v1/employee', {
+  const response = await fetch(`${BASE_URL}/api/v1/employee`, {
     method: 'GET',
     mode: 'cors',
     headers: {
@@ -118,7 +120,7 @@ async function requestEmployeeList(jwtToken: string): Promise<IGetEmployeeListRe
 async function importEmployeesFromCSV(jwtToken: string, csvFile: File): Promise<IGetEmployeeListResponse> {
   const formData = new FormData()
   formData.append('file', csvFile)
-  const response = await fetch('/api/v1/employee/import/csv', {
+  const response = await fetch(`${BASE_URL}/api/v1/employee/import/csv`, {
     method: 'POST',
     body: formData,
     headers: {

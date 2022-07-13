@@ -1,6 +1,5 @@
 import React from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { ButtonGroup, IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
+import { Link as MaterialLink, ButtonGroup, IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
 
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import countries from '@app/json/countries.json' 
@@ -43,7 +42,7 @@ export default function DataTable({
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell scope="row">
-                {row.firstName} {row.lastName}
+                <MaterialLink component={Link} to={`/employee/${row.id}`}>{row.firstName} {row.lastName}</MaterialLink>
               </TableCell>
               <TableCell align="right">{row.role}</TableCell>
               <TableCell align="right">

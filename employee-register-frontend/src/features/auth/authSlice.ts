@@ -26,7 +26,6 @@ export interface IPersonalData {
 }
 
 export interface IUser {
-  id: string
   email: string
   username: string
   personalData: IPersonalData
