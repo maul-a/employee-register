@@ -153,7 +153,8 @@ router.post('/me',
         error_message: 'Server Internal Error',
       })
     }
-  })
+  }
+)
 
 
 
@@ -208,7 +209,24 @@ router.get('/:id',
   async (req, res) => {
     const { id }  = req.params
     const employee = await Employee.findById(id)
-    return res.json({ data: { employee } })
+    if (!employee) {
+      return res.status(404).json({ 
+        error_code: 404,
+        error_message: 'Resource Not Found',
+      })
+    }
+    return res.json({ 
+      data: { 
+        employee: {
+          id: employee._id,
+          firstName: employee.firstName,
+          lastName: employee.lastName,
+          role: employee.role,
+          address: employee.address,
+          hasAuthData: !!employee.authData,
+        }
+      } 
+    })
   }
 )
 router.put('/:id',
@@ -258,7 +276,8 @@ router.put('/:id',
         } 
       } 
     })
-  })
+  }
+)
 
 router.delete('/:id',
   jwtGuard,
