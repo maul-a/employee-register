@@ -10,8 +10,8 @@ const router = Router()
 
 
 router.get('/',
-  // jwtGuard,
-  // getUser,
+  jwtGuard,
+  getUser,
   celebrate({
     [Segments.QUERY]: Joi.object().keys({
       userId: Joi.string().required(),

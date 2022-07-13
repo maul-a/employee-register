@@ -22,7 +22,7 @@ interface ICommentBackend {
 }
 
 async function requestCommentList(jwtToken: string, userId: string): Promise<IRequestCommentListResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/comments?userId=${userId}`, {
+  const response = await fetch(`${BASE_URL}/api/v1/comment?userId=${userId}`, {
     method: 'GET',
     mode: 'cors',
     headers: {
@@ -47,7 +47,7 @@ async function requestCommentList(jwtToken: string, userId: string): Promise<IRe
 
 
 async function createNewComment(jwtToken: string, text: string, userId: string): Promise<ICreateCommentResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1/comments`, {
+  const response = await fetch(`${BASE_URL}/api/v1/comment`, {
     method: 'POST',
     mode: 'cors',
     headers: {
